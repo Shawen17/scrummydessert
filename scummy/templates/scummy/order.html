@@ -1,0 +1,133 @@
+{%  extends 'scummy/index.html'  %}
+{% include 'scummy/message.html' %}
+
+
+	{% load static %}
+    {% block content %}	
+<head>
+	<title>Login V1</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->	
+	<link rel="icon" type="image/png" href="{% static 'scummy/images/icons/favicon.ico' %}"/>
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'scummy/vendor/bootstrap/css/bootstrap.min.css' %}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'scummy/fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'scummy/vendor/animate/animate.css' %}">
+<!--===============================================================================================-->	
+	<link rel="stylesheet" type="text/css" href="{% static 'scummy/vendor/css-hamburgers/hamburgers.min.css' %}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'scummy/vendor/select2/select2.min.css' %}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'scummy/css/util.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'scummy/css/main.css' %}">
+<!--===============================================================================================-->
+<style>
+    .selcls { 
+      margin-bottom: 10px;
+      padding: 3px;
+      border-radius: 10px; 
+      border: solid 1px #517B97; 
+      outline: 0; 
+      background: -webkit-gradient(linear, left top, left 25, from(#FFFFFF), color-stop(4%, #CAD9E3), to(#FFFFFF)); 
+      background: -moz-linear-gradient(top, #FFFFFF, #CAD9E3 1px, #FFFFFF 25px); 
+      box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px; 
+      -moz-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px; 
+      -webkit-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px; 
+      width:150px;
+      }
+
+    textarea {
+        border:1px solid grey;
+        border-radius: 10px;
+        background-color: rgb(223, 219, 219);
+        }
+    textarea:focus, input:focus {
+        border-color: lime !important;
+    }
+    .login101-pic {
+  width: 250px;
+}
+
+.login101-pic img {
+  max-width: 100%;
+}
+
+.login101-form {
+  width: 320px;
+}
+
+input[type=checkbox] {
+    transform: scale(1.3);
+}
+
+</style>
+</head>
+<body>
+	
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100">
+				<div class="login101-pic js-tilt" data-tilt>
+					<img src="{% static 'scummy/img/price_list.jpeg' %}" alt="IMG">
+				</div>
+
+				<form class="login101-form validate-form" method='POST'  action="{% url 'order' %}" id="order">
+					<span class="login100-form-title">
+						Make your Order at least 24hrs before delivery date
+					</span>
+					{% csrf_token %}
+                    
+                            <div class="wrap-input100 validate-input">
+                                <input type="checkbox" name="chkbox" value="small cup"><span style="padding-left: 4px;">Small cup</span><span style="padding-left: 12px;">qty</span><input  style="width:60px;border-radius: 5px;border: 1px solid gray;" type="number" name="quant">
+                            </div>
+                            <!-- <div class="wrap-input100 validate-input">
+                                <input type="checkbox" name="chkbox" value="big cup"><span style="padding-left: 4px;">Big cup</span><span style="padding-left: 30px;">qty</span><input  style="width:60px;border-radius: 5px;border: 1px solid gray;" type="number" name="quant">
+                            </div> -->
+                            <div class="wrap-input100 validate-input">
+                                <input type="checkbox" name="chkbox" value="mini bowl"><span style="padding-left: 4px;">Mini bowl</span><span style="padding-left: 22px;">qty</span><input  style="width:60px;border-radius: 5px;border: 1px solid gray;" type="number" name="quant">
+                            </div>
+                            <div class="wrap-input100 validate-input">
+                                <input type="checkbox" name="chkbox" value="big bowl"><span style="padding-left: 4px;">Big bowl</span><span style="padding-left: 30px;">qty</span><input  style="width:60px;border-radius: 5px;border: 1px solid gray;" type="number" name="quant">
+                            </div>
+                            <div class="wrap-input100 validate-input">
+                                <input class="input100" type="date" name="delivery_date" min="{{ today }}">
+                                <span class="focus-input100"></span>
+                                <span class="symbol-input100">
+                                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                                </span>
+                            </div>
+                        
+                    <div class="wrap-input100 validate-input">
+						<input class="input100" type="number" name="contact_number" placeholder="phone number">
+						<span class="focus-input100"></span>
+						<span class="symbol-input100">
+							<i class="fa fa-phone" aria-hidden="true"></i>
+						</span>
+					</div>
+                    <select class="selcls" name="city" style="width: 300px;border-radius:12px;" data-style="btn-success">
+                        <option selected disabled="true">--select city--</option>
+                        {% for centre in destination %}
+                        <option value="{{ centre.city }}" name="g">{{ centre.city|title }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="wrap-input100 validate-input">
+                        <textarea rows="5" cols="34" name="delivery_address" form="order" placeholder="Delivery Address"></textarea>
+                    </div>
+                    <div class="container-login100-form-btn">
+						<button class="login100-form-btn" type='submit'>
+							Checkout
+						</button>
+					</div>
+
+					
+				</form>
+                
+			</div>
+		</div>
+	</div>
+	
+</body>
+{% endblock %}

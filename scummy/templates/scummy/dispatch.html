@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <link href="{% static 'scummy/css/dispatch.css' %}" rel="stylesheet">
+    <title>ScrummyPartner</title>
+</head>
+
+
+<body>
+    <div class="row">
+        <div class="col-12 mb-4">
+            <a href="" class="navbar-brand m-0">
+                <h1 class="m-0 mt-n2 display-4 text-primary"><span class="text-secondary">S</span>CRUMMY</h1>
+            </a>
+        </div>
+    </div>
+  <section class="container-body">
+    <form method="post" action="{% url 'mark_dispatched' %}">
+        <div class="table-area">
+        <table class="responsive-table table">
+            <thead>
+            <tr>
+                <th>Item</th>
+                <th>Delivery Date</th>
+                <th>Contact</th>
+                <th>Address</th>
+                <th><input type="checkbox"  id="select_all_checkboxes">Status</th>
+            </tr>
+            </thead>
+            <tbody>
+                {%  for order in orders  %}
+            <tr>
+                <td>{{ order.item }}</td>
+                <td>{{ order.delivery_date }}</td>
+                <td>{{ order.contact_number }}</td>
+                <td>{{ order.delivery_address }}</td>
+                <td><input type="checkbox" name="chk[]" value="{{ order.id }}"></td>
+            </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        {% csrf_token %}
+        <div class="row d-flex justify-content-center">
+            <button class="login100-form-btn" name="delivered" type="button" onclick="document.getElementById('id01').style.display='block'">
+                Mark as Delivered
+            </button>
+        </div>
+        <div id="id01" class="modal">
+            <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+            
+            <div class="container1">
+                
+                <p>Are you sure you want to mark as delivered?</p>
+        
+                <div class="row d-flex justify-content-center">
+                
+                <button type="submit" class="deletebtn">Confirm</button>
+                </div>
+            </div>
+            
+        </div>
+    </form>
+  </section>
+  
+</body>
+<script>
+    // Get the modal
+    var modal = document.getElementById('id01');
+    
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+</script>
+
+</html>  
+  

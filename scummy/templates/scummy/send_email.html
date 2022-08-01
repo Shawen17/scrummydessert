@@ -1,0 +1,14 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+
+
+
+{% block content %}
+<form action="{% url 'reply-contact' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+<input type="submit">
+</form>
+{% endblock %}

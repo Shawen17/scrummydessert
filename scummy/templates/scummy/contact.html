@@ -1,0 +1,95 @@
+{%  extends 'scummy/index.html'  %}
+
+{% include 'scummy/message.html' %}
+
+
+	{% load static %}
+	{% block content %}
+<head>
+<!--===============================================================================================-->	
+	<link rel="icon" type="image/png" href="{% static 'scummy/images/icons/favicon.ico' %}"/>
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'scummy/vendor/bootstrap/css/bootstrap.min.css' %}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'scummy/fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'scummy/vendor/animate/animate.css' %}">
+<!--===============================================================================================-->	
+	<link rel="stylesheet" type="text/css" href="{% static 'scummy/vendor/css-hamburgers/hamburgers.min.css' %}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'scummy/vendor/select2/select2.min.css' %}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'scummy/css/util.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'scummy/css/main.css' %}">
+<!--===============================================================================================-->
+<style>
+    textarea {
+        border:1px solid grey;
+        border-radius: 10px;
+        background-color: rgb(223, 219, 219);
+        }
+    textarea:focus, input:focus {
+        border-color: lime !important;
+    }
+
+    .selcls { 
+      margin-bottom: 10px;
+      padding: 3px;
+      border-radius: 10px; 
+      border: solid 1px #517B97; 
+      outline: 0; 
+      background: -webkit-gradient(linear, left top, left 25, from(#FFFFFF), color-stop(4%, #CAD9E3), to(#FFFFFF)); 
+      background: -moz-linear-gradient(top, #FFFFFF, #CAD9E3 1px, #FFFFFF 25px); 
+      box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px; 
+      -moz-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px; 
+      -webkit-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px; 
+      width:150px;
+      }
+</style>
+</head>
+<body>
+	
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100">
+				<div class="login100-pic js-tilt" data-tilt>
+					<img src="{% static 'scummy/img/people.jpg' %}" alt="IMG">
+				</div>
+
+				<form class="login100-form validate-form" method='POST',action="{% url 'contact' %}"  id="contact">
+					<span class="login100-form-title">
+						We want to know your concerns
+					</span>
+					{% csrf_token %}
+                    <select class="selcls" name="com_list" style="width: 300px;border-radius:12px;" data-style="btn-success">
+                        <option selected disabled="true">--select subject--</option>
+                        {% for subject in com_list %}
+                        <option value="{{ subject }}" name="g">{{ subject|title }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if not user.is_authenticated %}
+                    <div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
+						<input class="input100" type="text" name="email" placeholder="Email">
+						<span class="focus-input100"></span>
+						<span class="symbol-input100">
+							<i class="fa fa-envelope" aria-hidden="true"></i>
+						</span>
+					</div>
+                    {% endif %}
+                    <div class="wrap-input100 validate-input">
+                        <textarea rows="6" cols="34" name="body" form="contact" placeholder="include phone_no for event planner"></textarea>
+                    </div>
+					
+					<div class="container-login100-form-btn">
+						<button class="login100-form-btn" type='submit'>
+							Submit
+						</button>
+					</div>
+
+				</form>
+		</div>
+		</div>
+	</div>
+	
+</body>
+{% endblock %}

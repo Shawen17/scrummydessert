@@ -59,7 +59,7 @@ class VendorAdmin(ModelAdmin):
 
 @admin.register(Charge)
 class ChargeAdmin(ModelAdmin):
-    list_display=['size','charge']
+    list_display=['size','charge','image']
 
 @admin.register(DestinationCharge)
 class DestinationChargeAdmin(ModelAdmin):

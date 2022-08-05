@@ -97,6 +97,7 @@ class Vendor(models.Model):
 class Charge(models.Model):
     size=models.CharField(max_length=50)
     charge=models.IntegerField()
+    image=models.ImageField(upload_to='media/images',blank=True)
 
     def __str__(self):
         return self.size

@@ -29,8 +29,10 @@ def home(request):
             return redirect('display_order')
 
         return render(request,'scummy/merchant_home.html')
-        
-    return render(request,'scummy/home.html')
+    
+    items=Charge.objects.all()
+    return render(request,'scummy/home.html',{'items':items})
+    
 
 def signupuser(request):
     

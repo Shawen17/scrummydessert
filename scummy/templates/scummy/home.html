@@ -62,7 +62,7 @@
             </div>
             <div class="col-lg-4" style="min-height: 400px;">
                 <div class="position-relative h-100 rounded overflow-hidden">
-                    <img class="position-absolute w-100 h-100" src="{% static 'scummy/img/parfait2.jpg' %}" style="object-fit: cover;">
+                    <img class="position-absolute w-100 h-100" src="{% static 'scummy/img/parfait_home.jpg' %}" style="object-fit: cover;">
                 </div>
             </div>
             <div class="col-lg-4 py-5">
@@ -261,19 +261,21 @@
         <div class="row">
             <div class="col-12">
                 <div class="owl-carousel product-carousel">
+                    {% for item in items %}
                     <div class="product-item d-flex flex-column align-items-center text-center bg-light rounded py-5 px-3">
                         <div class="bg-primary mt-n5 py-3" style="width: 80px;">
-                            <h4 class="font-weight-bold text-white mb-0">N1700</h4>
+                            <h4 class="font-weight-bold text-white mb-0">N{{ item.charge }}</h4>
                         </div>
                         <div class="position-relative bg-primary rounded-circle mt-n3 mb-4 p-3" style="width: 150px; height: 150px;">
-                            <img class="rounded-circle w-100 h-100" src="{% static 'scummy/img/small_cup.jpg' %}" style="object-fit: cover;">
+                            <img class="rounded-circle w-100 h-100" src="{{ item.image.url }}" style="object-fit: cover;">
                         </div>
-                        <h5 class="font-weight-bold mb-4">Small Cup Parfait</h5>
+                        <h5 class="font-weight-bold mb-4">{{ item.size|title }}</h5>
                         <a href="{% url 'order' %}" class="btn btn-sm btn-secondary">Order Now</a>
                     </div>
-                    <div class="product-item d-flex flex-column align-items-center text-center bg-light rounded py-5 px-3">
+                    {% endfor %}
+                    <!-- <div class="product-item d-flex flex-column align-items-center text-center bg-light rounded py-5 px-3">
                         <div class="bg-primary mt-n5 py-3" style="width: 80px;">
-                            <h4 class="font-weight-bold text-white mb-0">N2800</h4>
+                            <h4 class="font-weight-bold text-white mb-0">N{{ mini_bowl }}</h4>
                         </div>
                         <div class="position-relative bg-primary rounded-circle mt-n3 mb-4 p-3" style="width: 150px; height: 150px;">
                             <img class="rounded-circle w-100 h-100" src="{% static 'scummy/img/small_bowl.jpg' %}" style="object-fit: cover;">
@@ -283,7 +285,7 @@
                     </div>
                     <div class="product-item d-flex flex-column align-items-center text-center bg-light rounded py-5 px-3">
                         <div class="bg-primary mt-n5 py-3" style="width: 80px;">
-                            <h4 class="font-weight-bold text-white mb-0">N5000</h4>
+                            <h4 class="font-weight-bold text-white mb-0">N{{ small_bowl }}</h4>
                         </div>
                         <div class="position-relative bg-primary rounded-circle mt-n3 mb-4 p-3" style="width: 150px; height: 150px;">
                             <img class="rounded-circle w-100 h-100" src="{% static 'scummy/img/mini_bowl.jpg' %}" style="object-fit: cover;">
@@ -293,24 +295,15 @@
                     </div>
                     <div class="product-item d-flex flex-column align-items-center text-center bg-light rounded py-5 px-3">
                         <div class="bg-primary mt-n5 py-3" style="width: 80px;">
-                            <h4 class="font-weight-bold text-white mb-0">N10000</h4>
+                            <h4 class="font-weight-bold text-white mb-0">N{{ big_bowl }}</h4>
                         </div>
                         <div class="position-relative bg-primary rounded-circle mt-n3 mb-4 p-3" style="width: 150px; height: 150px;">
                             <img class="rounded-circle w-100 h-100" src="{% static 'scummy/img/big_bowl.jpg' %}" style="object-fit: cover;">
                         </div>
                         <h5 class="font-weight-bold mb-4">2 Litres Bowl Parfait</h5>
                         <a href="" class="btn btn-sm btn-secondary">Order Now</a>
-                    </div>
-                    <div class="product-item d-flex flex-column align-items-center text-center bg-light rounded py-5 px-3">
-                        <div class="bg-primary mt-n5 py-3" style="width: 80px;">
-                            <h4 class="font-weight-bold text-white mb-0">N4000</h4>
-                        </div>
-                        <div class="position-relative bg-primary rounded-circle mt-n3 mb-4 p-3" style="width: 150px; height: 150px;">
-                            <img class="rounded-circle w-100 h-100" src="{% static 'scummy/home/img/product-5.jpg' %}" style="object-fit: cover;">
-                        </div>
-                        <h5 class="font-weight-bold mb-4">1 litre Greek Yorghurt</h5>
-                        <a href="" class="btn btn-sm btn-secondary">Order Now</a>
-                    </div>
+                    </div> -->
+                    
                 </div>
             </div>
         </div>

@@ -322,6 +322,7 @@ iframe {
   padding-top: 20px;
 }
 
+
 .login100-form-btn {
   font-family: Montserrat-Bold;
   font-size: 15px;
@@ -390,6 +391,12 @@ iframe {
 @media (max-width: 576px) {
   .wrap-login100 {
     padding: 100px 15px 33px 15px;
+  }
+  .wrap-input100 {
+    position: relative;
+    width: 90%;
+    z-index: 1;
+    margin-bottom: 10px;
   }
 }
 

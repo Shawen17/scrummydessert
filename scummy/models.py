@@ -7,7 +7,7 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from datetime import datetime,date
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
-from .managers import UserManager
+from .managers import UserManager,LowercaseEmailField
 from .paystack import PayStack
 from store.settings import STATIC_ROOT
 from django.utils import timezone
@@ -31,8 +31,9 @@ for i,j in df1:
     states.append((i,j))
 
 
+
 class User(AbstractBaseUser,PermissionsMixin):
-    email=models.EmailField(_('email address'),unique=True)
+    email=LowercaseEmailField(_('email address'),unique=True)
     first_name=models.CharField(_('first name'),max_length=50,blank=True)
     last_name=models.CharField(_('last name'),max_length=50,blank=True)
     date_joined=models.DateTimeField(_('date joined'),null=True,blank=True)
@@ -63,6 +64,7 @@ class User(AbstractBaseUser,PermissionsMixin):
 
 
 class Order(models.Model):
+    ref=models.CharField(max_length=50,blank=True,null=True)
     item=models.JSONField(default=dict,null=True)
     ordered_by=models.CharField(max_length=130,null=True)
     ordered_on=models.DateTimeField(auto_now_add=True)
@@ -73,9 +75,10 @@ class Order(models.Model):
     paid=models.BooleanField(default=False)
     packed=models.BooleanField(default=False)
     delivered=models.BooleanField(default=False)
+    dispatch_partner=models.CharField(max_length=50,blank=True,null=True)
 
     def __str__(self):
-        return self.item
+        return self.ref
 
 class Vendor(models.Model):
     event_date=models.DateField()
@@ -159,3 +162,9 @@ class Response(models.Model):
     comment=models.TextField()
     replied_on=models.DateTimeField(auto_now_add=True)
     replied_by=models.CharField(max_length=50)
+
+
+class DispatcherperDestination(models.Model):
+    name=models.CharField(max_length=50)
+    email=models.EmailField(max_length=100)
+    location=models.ForeignKey(DestinationCharge,on_delete=models.CASCADE,related_name='destination')

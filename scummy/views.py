@@ -1,7 +1,7 @@
 from django.shortcuts import render,get_object_or_404, redirect
-from .models import User,Order,Transaction,Vendor,Charge,DestinationCharge,states
+from .models import User,Order,Transaction,Vendor,Charge,DestinationCharge,states,DispatcherperDestination
 from django.contrib import messages
-from django.contrib.auth import login,logout,authenticate
+from django.contrib.auth import login,logout,authenticate,get_user_model
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.core.mail import send_mail,BadHeaderError
@@ -18,6 +18,13 @@ from django.contrib.auth.forms import AuthenticationForm
 from .forms import OrderForm,SignupForm,LoginForm,ContactForm,SendEmailForm,VendorForm
 from django.http import HttpResponseRedirect,HttpResponse
 from datetime import date
+ 
+
+UserModel = get_user_model()
+
+def test(request):
+    return HttpResponse('test page')
+
 
 
 def home(request):
@@ -27,7 +34,6 @@ def home(request):
     if subdomain=='merchant':
         if request.user.is_authenticated:
             return redirect('display_order')
-
         return render(request,'scummy/merchant_home.html')
     
     items=Charge.objects.all()
@@ -35,7 +41,6 @@ def home(request):
     
 
 def signupuser(request):
-    
     if request.method == 'POST':
         form = SignupForm()
         email = request.POST['email']
@@ -79,7 +84,11 @@ def loginuser(request):
         if request.method=="GET":
             return render(request,'scummy/merchant_login.html')
         user= authenticate(request, email=request.POST['email'],password=request.POST['password'])
-        check=User.objects.get(email=user).last_login
+        
+        if user==None:
+            messages.info(request,'you are not a registered user')
+            return redirect('signupuser')
+        # check=User.objects.get(email=user).last_login
         partner=User.objects.get(email=user).vendor
         if partner==True:
             login(request,user)
@@ -92,9 +101,12 @@ def loginuser(request):
     if request.method=="GET":
         return render(request,'scummy/login.html')
     user= authenticate(request, email=request.POST['email'],password=request.POST['password'])
+    if user is None:
+        messages.info(request,'you are not a registered user, signup now')
+        return redirect('signupuser')
     check=User.objects.get(email=user).last_login
     if user is None:
-        messages.error(request,'Username or Password Incorrect')
+        messages.error(request,'Email or Password Incorrect')
         return redirect('loginuser')
             
     else:
@@ -109,6 +121,9 @@ def login_partner(request):
         return render(request,'scummy/merchant_login.html')
     user= authenticate(request, email=request.POST['email'],password=request.POST['password'])
     partner=User.objects.get(email=user).vendor
+    if not partner:
+        messages.info(request,'you are not a registered user')
+        return redirect('signupuser')
     
     if request.session.get('subdomain')=='merchant':
         if partner==True:
@@ -121,7 +136,9 @@ def login_partner(request):
 
 @login_required(login_url='/login/')
 def display_order(request):
-    orders=Order.objects.filter(packed=True,delivered=False)
+    user=request.user
+    dispatch=DispatcherperDestination.objects.filter(email=user)[0].name
+    orders=Order.objects.filter(packed=True,delivered=False,dispatch_partner=dispatch)
     return render(request,'scummy/dispatch.html',{'orders':orders})
 
 
@@ -144,7 +161,14 @@ def place_order(request):
     
     if city==1:
         return HttpResponse('kindly go back and fill all required fields')
-    destination_charge=DestinationCharge.objects.get(city=city).charge
+    dispatch_destination=DestinationCharge.objects.get(city=city)
+    destination_charge=dispatch_destination.charge
+    try:
+        dispatch_per=DispatcherperDestination.objects.get(location=dispatch_destination)
+        dispatch=dispatch_per.name
+    except:
+        dispatch=''
+    
     picks=request.POST.getlist('chkbox')
     quantity=request.POST.getlist('quant')
     quantity=[int(i) for i in quantity if i!='']
@@ -157,6 +181,7 @@ def place_order(request):
         cost+=d
     amount=cost+destination_charge
     request.session['cost']=cost
+    request.session['delivery_charge']=destination_charge
     cart_items=sum(quantity)
     items=[]
     for i,j in  enumerate(list(item_dict),1):
@@ -168,6 +193,7 @@ def place_order(request):
         new_order.amount=amount
         new_order.delivery_date=delivery_date
         new_order.ordered_by=user
+        new_order.dispatch_partner=dispatch
         new_order.save()
         
         return render(request,'scummy/checkout.html',{'dispatch':destination_charge,'cost':cost,'total':amount,'items':items,'cart_items':cart_items,'today':today})
@@ -180,7 +206,10 @@ def initiate_payment(request):
     email=request.user
     order=Order.objects.filter(ordered_by=email).last()
     items=order.item
+    delivery_charge=request.session.get('delivery_charge')
+    # cost=order.amount-delivery_charge
     cost=request.session.get('cost')
+    
     amount=order.amount
     vat=0.075*cost
     if amount>=2500:
@@ -193,24 +222,26 @@ def initiate_payment(request):
     data={
         'email':email,
         'items':items,
-        'amount':total
+        'amount':amount #without vat and paystack charge
     }
     transaction=Transaction.objects.create(**data)
     return render(request,'scummy/make_payment.html',{'transaction':transaction,'paystack_public_key':settings.PAYSTACK_PUBLIC_KEY,
-    'amount':amount,'vat':vat,'charge':paystack_charge,'total':total})
+    'amount':amount,'vat':vat,'charge':paystack_charge,'total':total,'cost':cost,'delivery_charge':delivery_charge})
 
 @login_required(login_url='/login/')
 def verify_payment(request,ref):
     
     payment = get_object_or_404(Transaction,ref=ref)
     verified = payment.verify_payment()
+
     
     if verified:
         payment.verified=True
         payment.save(update_fields=['verified'])
         order=Order.objects.filter(ordered_by=request.user).last()
+        order.ref=ref
         order.paid=True
-        order.save(update_fields=['paid'])
+        order.save(update_fields=['paid','ref'])
         messages.success(request, 'Payment Successful,you will be contacted soon for delivery')
     else:
         messages.error(request,"Payment Failed.")
@@ -298,7 +329,61 @@ def book_event(request):
 
 
 def mark_dispatched(request):
+    
     check_ids=request.POST.getlist("chk[]")
     check_ids=[int(i) for i in check_ids]
     orders=Order.objects.filter(id__in=check_ids).update(delivered=True)
     return redirect('display_order')
+
+#Password reset
+
+def password_reset_request(request):
+	if request.method == "POST":
+		password_reset_form = PasswordResetForm(request.POST)
+		if password_reset_form.is_valid():
+			data = password_reset_form.cleaned_data['email']
+			associated_users = User.objects.filter(email=data)
+			if associated_users.exists():
+				for user in associated_users:
+					subject = "Password Reset Requested"
+					plaintext = template.loader.get_template('password/password_reset_email.txt')
+					htmltemp = template.loader.get_template('password/password_reset_email.html')
+					c = { 
+					"email":user.email,
+					'domain':'scrummydessert.com:8000',
+					'site_name': 'Scrummydessert',
+					"uid": urlsafe_base64_encode(force_bytes(user.pk)),
+					"user": user,
+					'token': default_token_generator.make_token(user),
+					'protocol': 'http',
+					}
+					text_content = plaintext.render(c)
+					html_content = htmltemp.render(c)
+					try:
+						msg = EmailMultiAlternatives(subject, text_content, 'Giveaway <admin@example.com>', [user.email], headers = {'Reply-To': 'admin@example.com'})
+						msg.attach_alternative(html_content, "text/html")
+                        
+						msg.send()
+					except BadHeaderError:
+						return HttpResponse('Invalid header found.')
+					messages.info(request, "Password reset instructions have been sent to the email address entered.")
+					return redirect ("home")
+                
+               
+	password_reset_form = PasswordResetForm()
+	return render(request,"password/password_reset.html",{"password_reset_form":password_reset_form})
+
+
+def activate(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64)
+        user = UserModel._default_manager.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        messages.success(request,'Thank you for your email confirmation. Now you can login your account.')
+        return redirect('loginuser')
+    else:
+        return HttpResponse('Activation link is invalid!')

@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'scummy',
     'crispy_forms',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
     
 ]
 
@@ -148,3 +151,5 @@ MESSAGE_TAGS = {
 EMAIL_USE_TLS = True
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+SITE_ID=1

@@ -15,9 +15,14 @@
 
 
 <body>
+    <div style="position: absolute; top: 0; right: 0; width: 100px; text-align:right;">
+        <a href="{% url 'logoutuser' %}" >
+                <h3>LOGOUT</h3>
+        </a>
+    </div>
     <div class="row">
-        <div class="col-12 mb-4">
-            <a href="" class="navbar-brand m-0">
+        <div class="col-4 mb-4">
+            <a href="{% url 'logoutuser' %}" class="navbar-brand m-0">
                 <h1 class="m-0 mt-n2 display-4 text-primary"><span class="text-secondary">S</span>CRUMMY</h1>
             </a>
         </div>

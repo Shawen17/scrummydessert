@@ -24,6 +24,7 @@ from django.conf.urls import url
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.home,name='home'),
+    path('test/',views.test,name='testing'),
     path('admin/reply',views.reply_contact,name='reply-contact'),
     # path('accounts/', include('scummy.urls')),
     path('signup/',views.signupuser,name='signupuser'),
@@ -37,6 +38,12 @@ urlpatterns = [
     path('<str:ref>/transaction',views.verify_payment,name='verify-payment'),
     path('contactus/',views.contactus,name='contact'),
     path('book/event',views.book_event,name='booking'),
+    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='password/password_reset_done.html'), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name="password/password_reset_confirm.html"), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='password/password_reset_complete.html'), name='password_reset_complete'), 
+    path('activate/<uidb64>/<token>/',views.activate, name='activate'),
+    path('accounts/', include('allauth.urls')),
+    path('password_reset/', views.password_reset_request, name='password_reset'),
 ]
 
 

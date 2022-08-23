@@ -1,5 +1,7 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils import timezone
+from django.db import models
+
 
 class UserManager(BaseUserManager):
     use_in_migrations=True
@@ -26,3 +28,11 @@ class UserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True')
         return self._create_user(email,password,**extra_fields)
+
+
+class LowercaseEmailField(models.EmailField):
+    def to_python(self,value):
+        value=super(LowercaseEmailField,self).to_python(value)
+        if isinstance(value,str):
+            return value.lower()
+        return value

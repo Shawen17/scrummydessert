@@ -1,5 +1,5 @@
 {%  extends 'scummy/index.html'  %}
-{% include 'scrummy/message.html' %}
+{% include 'scummy/message.html' %}
 
 
 	{% load static %}
@@ -32,20 +32,23 @@
 						Login
 					</span>
 					{% csrf_token %}
-					<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
+					<div class="container-login100-form-btn">
+					<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.com">
 						<input class="input100" type="text" name="email" placeholder="Email">
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
 							<i class="fa fa-envelope" aria-hidden="true"></i>
 						</span>
 					</div>
-
+					</div>
+					<div class="container-login100-form-btn">
 					<div class="wrap-input100 validate-input" data-validate = "Password is required">
 						<input class="input100" type="password" name="password" placeholder="Password">
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
 							<i class="fa fa-lock" aria-hidden="true"></i>
 						</span>
+					</div>
 					</div>
 					
 					<div class="container-login100-form-btn">
@@ -58,7 +61,7 @@
 						<span class="txt1">
 							Forgot
 						</span>
-						<a class="txt2" href="#">
+						<a class="txt2" href="{% url 'password_reset' %}">
 							Username / Password?
 						</a>
 					</div>

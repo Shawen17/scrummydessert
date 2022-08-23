@@ -61,25 +61,28 @@
 						We want to know your concerns
 					</span>
 					{% csrf_token %}
-                    <select class="selcls" name="com_list" style="width: 300px;border-radius:12px;" data-style="btn-success">
-                        <option selected disabled="true">--select subject--</option>
-                        {% for subject in com_list %}
-                        <option value="{{ subject }}" name="g">{{ subject|title }}</option>
-                        {% endfor %}
-                    </select>
+					<div class="container-login100-form-btn">
+						<select class="selcls" name="com_list" style="width: 300px;border-radius:12px;" data-style="btn-success">
+							<option selected disabled="true">--select subject--</option>
+							{% for subject in com_list %}
+							<option value="{{ subject }}" name="g">{{ subject|title }}</option>
+							{% endfor %}
+						</select>
+					</div>
                     {% if not user.is_authenticated %}
-                    <div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
-						<input class="input100" type="text" name="email" placeholder="Email">
-						<span class="focus-input100"></span>
-						<span class="symbol-input100">
-							<i class="fa fa-envelope" aria-hidden="true"></i>
-						</span>
+					<div class="container-login100-form-btn">
+						<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
+							<input class="input100" type="text" name="email" placeholder="Email">
+							<span class="focus-input100"></span>
+							<span class="symbol-input100">
+								<i class="fa fa-envelope" aria-hidden="true"></i>
+							</span>
+						</div>
 					</div>
                     {% endif %}
-                    <div class="wrap-input100 validate-input">
-                        <textarea rows="6" style="width:300px" name="body" form="contact" placeholder="include phone_no for event planner"></textarea>
-                    </div>
-					
+					<div class="container-login100-form-btn">
+						<textarea rows="6" style="width:300px" name="body" form="contact" placeholder="include phone_no for event planner"></textarea>
+					</div>
 					<div class="container-login100-form-btn">
 						<button class="login100-form-btn" type='submit'>
 							Submit
